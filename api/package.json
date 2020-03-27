@@ -10,7 +10,7 @@
     "migrate": "prisma2 migrate save --experimental",
     "migrate-up": "prisma2 migrate up --experimental",
     "postinstall": "yarn generate",
-    "dev": "ts-node-dev --no-notify --respawn --transpileOnly src/server"
+    "dev": "ts-node-dev --no-notify --respawn --transpileOnly src/index"
   },
   "dependencies": {
     "@prisma/client": "2.0.0-preview025",
