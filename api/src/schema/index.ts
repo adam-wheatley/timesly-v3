@@ -20,7 +20,7 @@ export const schema = makeSchema({
         alias: 'prisma',
       },
       {
-        source: require.resolve('./context'),
+        source: require.resolve('../context'),
         alias: 'Context',
       },
     ],
