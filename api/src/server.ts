@@ -1,11 +1,29 @@
-import { ApolloServer } from 'apollo-server'
-import { schema } from './schema'
+/* eslint-disable import/first */
+require('dotenv').config()
+import express from 'express'
+import cors from 'cors'
+import { ApolloServer } from 'apollo-server-express'
 import { createContext } from './context'
+import { schema } from './schema'
+;(async () => {
+  const app = express()
+  app.use(
+    cors({
+      origin: ['http://localhost:3000'],
+      credentials: true,
+    }),
+  )
 
-new ApolloServer({ schema, context: createContext }).listen(
-  { port: 4000 },
-  () =>
-    console.log(
-      `🚀 Server ready at: http://localhost:4000\n⭐️ See sample queries: http://pris.ly/e/ts/graphql-apollo-server#using-the-graphql-api`,
-    ),
-)
+  const apolloServer = new ApolloServer({
+    schema,
+    introspection: true,
+    playground: true,
+    context: createContext(),
+  })
+
+  apolloServer.applyMiddleware({ app, cors: false })
+  const port = process.env.PORT || 4000
+  app.listen(port, () => {
+    console.log(`🚀 Server ready at: http://localhost:${port} ⭐️`)
+  })
+})()
