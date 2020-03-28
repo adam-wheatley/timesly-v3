@@ -9,6 +9,8 @@ const User = objectType({
     t.model.email()
     t.model.posts()
     t.model.company()
+    t.model.dateOfBirth()
+    t.model.teams()
   },
 })
 

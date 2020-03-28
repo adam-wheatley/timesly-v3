@@ -11,6 +11,7 @@ import { User } from '@prisma/client'
 import { sendRefreshToken, createAccessToken } from './utils/auth'
 ;(async () => {
   const app = express()
+
   app.use(
     cors({
       origin: ['http://localhost:3000'],
@@ -46,7 +47,7 @@ import { sendRefreshToken, createAccessToken } from './utils/auth'
     schema,
     introspection: true,
     playground: true,
-    context: createContext(),
+    context: params => createContext(params),
   })
 
   apolloServer.applyMiddleware({ app, cors: false })

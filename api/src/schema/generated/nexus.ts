@@ -5,7 +5,7 @@
 
 import * as Context from "../../context"
 import * as prisma from "@prisma/client"
-
+import { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
 
 
 declare global {
@@ -20,40 +20,15 @@ declare global {
 }
 
 export interface NexusGenInputs {
-  CompanyCreateOneWithoutUsersInput: { // input type
-    connect?: NexusGenInputs['CompanyWhereUniqueInput'] | null; // CompanyWhereUniqueInput
-    create?: NexusGenInputs['CompanyCreateWithoutUsersInput'] | null; // CompanyCreateWithoutUsersInput
-  }
-  CompanyCreateWithoutUsersInput: { // input type
-    id?: string | null; // String
-    name: string; // String!
-  }
-  CompanyWhereUniqueInput: { // input type
-    id?: string | null; // String
-  }
-  PostCreateManyWithoutAuthorInput: { // input type
-    connect?: NexusGenInputs['PostWhereUniqueInput'][] | null; // [PostWhereUniqueInput!]
-    create?: NexusGenInputs['PostCreateWithoutAuthorInput'][] | null; // [PostCreateWithoutAuthorInput!]
-  }
-  PostCreateWithoutAuthorInput: { // input type
-    content?: string | null; // String
-    id?: string | null; // String
-    published?: boolean | null; // Boolean
-    title: string; // String!
-  }
   PostWhereUniqueInput: { // input type
     id?: string | null; // String
   }
-  UserCreateInput: { // input type
-    company: NexusGenInputs['CompanyCreateOneWithoutUsersInput']; // CompanyCreateOneWithoutUsersInput!
-    email: string; // String!
-    firstName?: string | null; // String
+  TeamWhereUniqueInput: { // input type
     id?: string | null; // String
-    isActive?: boolean | null; // Boolean
-    lastName?: string | null; // String
-    password: string; // String!
-    posts?: NexusGenInputs['PostCreateManyWithoutAuthorInput'] | null; // PostCreateManyWithoutAuthorInput
-    tokenVersion?: number | null; // Int
+  }
+  UserWhereUniqueInput: { // input type
+    email?: string | null; // String
+    id?: string | null; // String
   }
 }
 
@@ -62,25 +37,27 @@ export interface NexusGenEnums {
 
 export interface NexusGenRootTypes {
   Company: prisma.Company;
+  LoginResponse: { // root type
+    accessToken: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
   Mutation: {};
   Post: prisma.Post;
   Query: {};
+  Team: prisma.Team;
   User: prisma.User;
   String: string;
   Int: number;
   Float: number;
   Boolean: boolean;
   ID: string;
+  DateTime: any;
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
-  CompanyCreateOneWithoutUsersInput: NexusGenInputs['CompanyCreateOneWithoutUsersInput'];
-  CompanyCreateWithoutUsersInput: NexusGenInputs['CompanyCreateWithoutUsersInput'];
-  CompanyWhereUniqueInput: NexusGenInputs['CompanyWhereUniqueInput'];
-  PostCreateManyWithoutAuthorInput: NexusGenInputs['PostCreateManyWithoutAuthorInput'];
-  PostCreateWithoutAuthorInput: NexusGenInputs['PostCreateWithoutAuthorInput'];
   PostWhereUniqueInput: NexusGenInputs['PostWhereUniqueInput'];
-  UserCreateInput: NexusGenInputs['UserCreateInput'];
+  TeamWhereUniqueInput: NexusGenInputs['TeamWhereUniqueInput'];
+  UserWhereUniqueInput: NexusGenInputs['UserWhereUniqueInput'];
 }
 
 export interface NexusGenFieldTypes {
@@ -88,10 +65,16 @@ export interface NexusGenFieldTypes {
     id: string; // String!
     name: string; // String!
   }
+  LoginResponse: { // field return type
+    accessToken: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
   Mutation: { // field return type
-    createDraft: NexusGenRootTypes['Post']; // Post!
-    deleteOnePost: NexusGenRootTypes['Post'] | null; // Post
-    signupUser: NexusGenRootTypes['User']; // User!
+    login: NexusGenRootTypes['LoginResponse']; // LoginResponse!
+    logout: boolean; // Boolean!
+    register: NexusGenRootTypes['User']; // User!
+    revokeRefreshTokensForUser: boolean; // Boolean!
+    updateMe: boolean; // Boolean!
   }
   Post: { // field return type
     author: NexusGenRootTypes['User'] | null; // User
@@ -103,30 +86,47 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     feed: NexusGenRootTypes['Post'][]; // [Post!]!
     filterPosts: NexusGenRootTypes['Post'][]; // [Post!]!
+    me: NexusGenRootTypes['User'] | null; // User
     post: NexusGenRootTypes['Post'] | null; // Post
+  }
+  Team: { // field return type
+    company: NexusGenRootTypes['Company']; // Company!
+    id: string; // String!
+    name: string | null; // String
+    users: NexusGenRootTypes['User'][]; // [User!]!
   }
   User: { // field return type
     company: NexusGenRootTypes['Company']; // Company!
+    dateOfBirth: any | null; // DateTime
     email: string; // String!
     firstName: string | null; // String
     id: string; // String!
     lastName: string | null; // String
     posts: NexusGenRootTypes['Post'][]; // [Post!]!
+    teams: NexusGenRootTypes['Team'][]; // [Team!]!
   }
 }
 
 export interface NexusGenArgTypes {
   Mutation: {
-    createDraft: { // args
-      authorEmail?: string | null; // String
-      content?: string | null; // String
-      title: string; // String!
+    login: { // args
+      email: string; // String!
+      password: string; // String!
     }
-    deleteOnePost: { // args
-      where: NexusGenInputs['PostWhereUniqueInput']; // PostWhereUniqueInput!
+    register: { // args
+      companyName: string; // String!
+      email: string; // String!
+      firstName?: string | null; // String
+      lastName?: string | null; // String
+      password: string; // String!
     }
-    signupUser: { // args
-      data: NexusGenInputs['UserCreateInput']; // UserCreateInput!
+    revokeRefreshTokensForUser: { // args
+      userId?: string | null; // String
+    }
+    updateMe: { // args
+      dateOfBirth?: any | null; // DateTime
+      firstName?: string | null; // String
+      lastName?: string | null; // String
     }
   }
   Query: {
@@ -137,10 +137,26 @@ export interface NexusGenArgTypes {
       where: NexusGenInputs['PostWhereUniqueInput']; // PostWhereUniqueInput!
     }
   }
+  Team: {
+    users: { // args
+      after?: NexusGenInputs['UserWhereUniqueInput'] | null; // UserWhereUniqueInput
+      before?: NexusGenInputs['UserWhereUniqueInput'] | null; // UserWhereUniqueInput
+      first?: number | null; // Int
+      last?: number | null; // Int
+      skip?: number | null; // Int
+    }
+  }
   User: {
     posts: { // args
       after?: NexusGenInputs['PostWhereUniqueInput'] | null; // PostWhereUniqueInput
       before?: NexusGenInputs['PostWhereUniqueInput'] | null; // PostWhereUniqueInput
+      first?: number | null; // Int
+      last?: number | null; // Int
+      skip?: number | null; // Int
+    }
+    teams: { // args
+      after?: NexusGenInputs['TeamWhereUniqueInput'] | null; // TeamWhereUniqueInput
+      before?: NexusGenInputs['TeamWhereUniqueInput'] | null; // TeamWhereUniqueInput
       first?: number | null; // Int
       last?: number | null; // Int
       skip?: number | null; // Int
@@ -153,15 +169,15 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Company" | "Mutation" | "Post" | "Query" | "User";
+export type NexusGenObjectNames = "Company" | "LoginResponse" | "Mutation" | "Post" | "Query" | "Team" | "User";
 
-export type NexusGenInputNames = "CompanyCreateOneWithoutUsersInput" | "CompanyCreateWithoutUsersInput" | "CompanyWhereUniqueInput" | "PostCreateManyWithoutAuthorInput" | "PostCreateWithoutAuthorInput" | "PostWhereUniqueInput" | "UserCreateInput";
+export type NexusGenInputNames = "PostWhereUniqueInput" | "TeamWhereUniqueInput" | "UserWhereUniqueInput";
 
 export type NexusGenEnumNames = never;
 
 export type NexusGenInterfaceNames = never;
 
-export type NexusGenScalarNames = "Boolean" | "Float" | "ID" | "Int" | "String";
+export type NexusGenScalarNames = "Boolean" | "DateTime" | "Float" | "ID" | "Int" | "String";
 
 export type NexusGenUnionNames = never;
 
@@ -191,6 +207,15 @@ declare global {
   interface NexusGenPluginTypeConfig<TypeName extends string> {
   }
   interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
+    /**
+     * Authorization for an individual field. Returning "true"
+     * or "Promise<true>" means the field can be accessed.
+     * Returning "false" or "Promise<false>" will respond
+     * with a "Not Authorized" error for the field.
+     * Returning or throwing an error will also prevent the
+     * resolver from executing.
+     */
+    authorize?: FieldAuthorizeResolver<TypeName, FieldName>
   }
   interface NexusGenPluginSchemaConfig {
   }
