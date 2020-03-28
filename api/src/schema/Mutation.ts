@@ -125,6 +125,7 @@ const Mutation = objectType({
             password: hashedPassword,
             firstName,
             lastName,
+            isAdmin: true,
             company: {
               create: {
                 name: companyName,
