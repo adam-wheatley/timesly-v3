@@ -20,21 +20,35 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CompanyCreateOneWithoutUsersInput: { // input type
+    connect?: NexusGenInputs['CompanyWhereUniqueInput'] | null; // CompanyWhereUniqueInput
+    create?: NexusGenInputs['CompanyCreateWithoutUsersInput'] | null; // CompanyCreateWithoutUsersInput
+  }
+  CompanyCreateWithoutUsersInput: { // input type
+    id?: string | null; // String
+    name: string; // String!
+  }
+  CompanyWhereUniqueInput: { // input type
+    id?: string | null; // String
+  }
   PostCreateManyWithoutAuthorInput: { // input type
     connect?: NexusGenInputs['PostWhereUniqueInput'][] | null; // [PostWhereUniqueInput!]
     create?: NexusGenInputs['PostCreateWithoutAuthorInput'][] | null; // [PostCreateWithoutAuthorInput!]
   }
   PostCreateWithoutAuthorInput: { // input type
     content?: string | null; // String
+    id?: string | null; // String
     published?: boolean | null; // Boolean
     title: string; // String!
   }
   PostWhereUniqueInput: { // input type
-    id?: number | null; // Int
+    id?: string | null; // String
   }
   UserCreateInput: { // input type
+    company: NexusGenInputs['CompanyCreateOneWithoutUsersInput']; // CompanyCreateOneWithoutUsersInput!
     email: string; // String!
     firstName?: string | null; // String
+    id?: string | null; // String
     isActive?: boolean | null; // Boolean
     lastName?: string | null; // String
     password: string; // String!
@@ -47,6 +61,7 @@ export interface NexusGenEnums {
 }
 
 export interface NexusGenRootTypes {
+  Company: prisma.Company;
   Mutation: {};
   Post: prisma.Post;
   Query: {};
@@ -59,6 +74,9 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  CompanyCreateOneWithoutUsersInput: NexusGenInputs['CompanyCreateOneWithoutUsersInput'];
+  CompanyCreateWithoutUsersInput: NexusGenInputs['CompanyCreateWithoutUsersInput'];
+  CompanyWhereUniqueInput: NexusGenInputs['CompanyWhereUniqueInput'];
   PostCreateManyWithoutAuthorInput: NexusGenInputs['PostCreateManyWithoutAuthorInput'];
   PostCreateWithoutAuthorInput: NexusGenInputs['PostCreateWithoutAuthorInput'];
   PostWhereUniqueInput: NexusGenInputs['PostWhereUniqueInput'];
@@ -66,16 +84,19 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 }
 
 export interface NexusGenFieldTypes {
+  Company: { // field return type
+    id: string; // String!
+    name: string; // String!
+  }
   Mutation: { // field return type
     createDraft: NexusGenRootTypes['Post']; // Post!
     deleteOnePost: NexusGenRootTypes['Post'] | null; // Post
-    publish: NexusGenRootTypes['Post'] | null; // Post
     signupUser: NexusGenRootTypes['User']; // User!
   }
   Post: { // field return type
     author: NexusGenRootTypes['User'] | null; // User
     content: string | null; // String
-    id: number; // Int!
+    id: string; // String!
     published: boolean; // Boolean!
     title: string; // String!
   }
@@ -85,9 +106,10 @@ export interface NexusGenFieldTypes {
     post: NexusGenRootTypes['Post'] | null; // Post
   }
   User: { // field return type
+    company: NexusGenRootTypes['Company']; // Company!
     email: string; // String!
     firstName: string | null; // String
-    id: number; // Int!
+    id: string; // String!
     lastName: string | null; // String
     posts: NexusGenRootTypes['Post'][]; // [Post!]!
   }
@@ -103,9 +125,6 @@ export interface NexusGenArgTypes {
     deleteOnePost: { // args
       where: NexusGenInputs['PostWhereUniqueInput']; // PostWhereUniqueInput!
     }
-    publish: { // args
-      id?: number | null; // Int
-    }
     signupUser: { // args
       data: NexusGenInputs['UserCreateInput']; // UserCreateInput!
     }
@@ -118,6 +137,15 @@ export interface NexusGenArgTypes {
       where: NexusGenInputs['PostWhereUniqueInput']; // PostWhereUniqueInput!
     }
   }
+  User: {
+    posts: { // args
+      after?: NexusGenInputs['PostWhereUniqueInput'] | null; // PostWhereUniqueInput
+      before?: NexusGenInputs['PostWhereUniqueInput'] | null; // PostWhereUniqueInput
+      first?: number | null; // Int
+      last?: number | null; // Int
+      skip?: number | null; // Int
+    }
+  }
 }
 
 export interface NexusGenAbstractResolveReturnTypes {
@@ -125,9 +153,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Mutation" | "Post" | "Query" | "User";
+export type NexusGenObjectNames = "Company" | "Mutation" | "Post" | "Query" | "User";
 
-export type NexusGenInputNames = "PostCreateManyWithoutAuthorInput" | "PostCreateWithoutAuthorInput" | "PostWhereUniqueInput" | "UserCreateInput";
+export type NexusGenInputNames = "CompanyCreateOneWithoutUsersInput" | "CompanyCreateWithoutUsersInput" | "CompanyWhereUniqueInput" | "PostCreateManyWithoutAuthorInput" | "PostCreateWithoutAuthorInput" | "PostWhereUniqueInput" | "UserCreateInput";
 
 export type NexusGenEnumNames = never;
 

@@ -4,9 +4,10 @@ import { Query } from './Query'
 import { Mutation } from './Mutation'
 import { Post } from './Post'
 import { User } from './User'
+import { Company } from './Company'
 
 export const schema = makeSchema({
-  types: [Query, Mutation, Post, User],
+  types: [Query, Mutation, Post, Company, User],
   plugins: [nexusPrismaPlugin()],
   outputs: {
     schema: __dirname + '/../schema.graphql',

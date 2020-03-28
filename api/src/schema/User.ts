@@ -7,9 +7,8 @@ const User = objectType({
     t.model.firstName()
     t.model.lastName()
     t.model.email()
-    t.model.posts({
-      pagination: false,
-    })
+    t.model.posts()
+    t.model.company()
   },
 })
 

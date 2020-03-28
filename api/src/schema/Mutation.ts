@@ -1,4 +1,4 @@
-import { intArg, objectType, stringArg } from 'nexus'
+import { objectType, stringArg } from 'nexus'
 
 const Mutation = objectType({
   name: 'Mutation',
@@ -23,20 +23,6 @@ const Mutation = objectType({
               connect: { email: authorEmail },
             },
           },
-        })
-      },
-    })
-
-    t.field('publish', {
-      type: 'Post',
-      nullable: true,
-      args: {
-        id: intArg(),
-      },
-      resolve: (_, { id }, ctx) => {
-        return ctx.prisma.post.update({
-          where: { id: Number(id) },
-          data: { published: true },
         })
       },
     })
